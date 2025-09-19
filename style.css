@@ -1,0 +1,186 @@
+let user1Names = [];
+let user2Names = [];
+let namesPool = [];
+let filteredPool = [];
+let currentIndex = 0;
+let swipingUser = 'User 1';
+let user1Likes = new Set();
+let user2Likes = new Set();
+
+// --- Start Swiping ---
+document.getElementById("start-btn").addEventListener("click", () => {
+    const file1 = document.getElementById("user1file").files[0];
+    const file2 = document.getElementById("user2file").files[0];
+    if (!file1 || !file2) {
+        alert("Please upload both files!");
+        return;
+    }
+
+    Papa.parse(file1, { header: true, complete: function(results) {
+        user1Names = results.data;
+        checkStart();
+    }});
+    Papa.parse(file2, { header: true, complete: function(results) {
+        user2Names = results.data;
+        checkStart();
+    }});
+});
+
+// --- Shuffle ---
+function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+}
+
+// --- Start after files loaded ---
+function checkStart() {
+    if (user1Names.length && user2Names.length) {
+        namesPool = [...new Set([...user1Names, ...user2Names])];
+        shuffle(namesPool);
+        document.getElementById("upload-section").style.display = "none";
+        document.getElementById("filter-section").style.display = "block";
+        document.getElementById("swipe-section").style.display = "block";
+        applyFilter();
+    }
+}
+
+// --- Gender filter ---
+document.getElementById("gender-filter").addEventListener("change", applyFilter);
+function applyFilter() {
+    const filter = document.getElementById("gender-filter").value;
+    if (filter === "all") filteredPool = [...namesPool];
+    else filteredPool = namesPool.filter(n => n.Gender === filter);
+    currentIndex = 0;
+    showCard();
+}
+
+// --- Nickname toggle ---
+document.getElementById("show-nicknames").addEventListener("change", () => showCard());
+
+// --- Show cards ---
+function showCard() {
+    const swipeSection = document.getElementById("swipe-section");
+    Array.from(swipeSection.querySelectorAll(".card")).forEach(c => c.remove());
+
+    if (filteredPool.length === 0) {
+        alert("No names match this filter!");
+        return;
+    }
+
+    if (currentIndex >= filteredPool.length) {
+        if (swipingUser === 'User 1') {
+            swipingUser = 'User 2';
+            currentIndex = 0;
+            applyFilter();
+        } else {
+            showMatches();
+        }
+        return;
+    }
+
+    for (let i = 0; i < 2; i++) {
+        if (currentIndex + i >= filteredPool.length) break;
+        const data = filteredPool[currentIndex + i];
+        const cardDiv = document.createElement("div");
+        cardDiv.className = "card";
+
+        const nameEl = document.createElement("h2");
+        nameEl.textContent = data.Name || "";
+        cardDiv.appendChild(nameEl);
+
+        const genderEl = document.createElement("p");
+        genderEl.textContent = data.Gender ? `Gender: ${data.Gender}` : "";
+        cardDiv.appendChild(genderEl);
+
+        const showNicknames = document.getElementById("show-nicknames").checked;
+        const nickEl = document.createElement("p");
+        nickEl.textContent = (data.Nicknames && showNicknames) ? `Nicknames: ${data.Nicknames}` : "";
+        cardDiv.appendChild(nickEl);
+
+        swipeSection.insertBefore(cardDiv, document.getElementById("buttons"));
+    }
+
+    document.getElementById("turn").textContent = `${swipingUser}'s turn`;
+    attachDrag(); // enable swipe on top card
+}
+
+// --- Swipe logic ---
+function swipe(liked) {
+    const current = filteredPool[currentIndex];
+    if (liked) {
+        if (swipingUser === 'User 1') user1Likes.add(current.Name);
+        else user2Likes.add(current.Name);
+    }
+    currentIndex++;
+    showCard();
+}
+
+// Buttons
+document.getElementById("like-btn").addEventListener("click", () => swipe(true));
+document.getElementById("dislike-btn").addEventListener("click", () => swipe(false));
+
+// Matches
+function showMatches() {
+    document.getElementById("swipe-section").style.display = "none";
+    document.getElementById("matches-section").style.display = "block";
+    const matches = [...user1Likes].filter(name => user2Likes.has(name));
+    const list = document.getElementById("matches-list");
+    list.innerHTML = "";
+    if (matches.length === 0) list.innerHTML = "<li>No matches 😢</li>";
+    else matches.forEach(name => {
+        const li = document.createElement("li");
+        li.textContent = name;
+        list.appendChild(li);
+    });
+}
+
+// --- Drag/Swipe Animation ---
+function attachDrag() {
+    const card = document.querySelector("#swipe-section .card:first-child");
+    if (!card) return;
+
+    let isDragging = false;
+    let startX = 0;
+
+    function resetCard() {
+        card.style.transition = "transform 0.3s ease, opacity 0.3s ease";
+        card.style.transform = "translateX(0px) rotate(0deg)";
+        card.style.opacity = "1";
+    }
+
+    card.addEventListener("mousedown", e => {
+        isDragging = true;
+        startX = e.clientX;
+        card.classList.add("dragging");
+    });
+    card.addEventListener("mousemove", e => {
+        if (!isDragging) return;
+        const deltaX = e.clientX - startX;
+        card.style.transform = `translateX(${deltaX}px) rotate(${deltaX/10}deg)`;
+    });
+    card.addEventListener("mouseup", e => {
+        if (!isDragging) return;
+        isDragging = false;
+        card.classList.remove("dragging");
+        const deltaX = e.clientX - startX;
+        if (deltaX > 100) { swipe(true); animateCard("right", card); }
+        else if (deltaX < -100) { swipe(false); animateCard("left", card); }
+        else resetCard();
+    });
+    card.addEventListener("mouseleave", e => { if (isDragging) { isDragging=false; card.classList.remove("dragging"); resetCard(); }});
+
+    // Touch
+    card.addEventListener("touchstart", e => { isDragging=true; startX=e.touches[0].clientX; });
+    card.addEventListener("touchmove", e => { if(!isDragging) return; const deltaX=e.touches[0].clientX-startX; card.style.transform=`translateX(${deltaX}px) rotate(${deltaX/10}deg)`; });
+    card.addEventListener("touchend", e => { if(!isDragging) return; isDragging=false; const deltaX=e.changedTouches[0].clientX-startX; if(deltaX>100){swipe(true);animateCard("right",card);} else if(deltaX<-100){swipe(false);animateCard("left",card);} else resetCard(); });
+}
+
+function animateCard(direction, card) {
+    const distance = direction==="right"?1000:-1000;
+    card.style.transition="transform 0.5s ease, opacity 0.5s ease";
+    card.style.transform=`translateX(${distance}px) rotate(${distance/10}deg)`;
+    card.style.opacity="0";
+    setTimeout(()=>{ showCard(); },500);
+}

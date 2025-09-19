@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Baby Name Tinder</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Baby Name Tinder 💖</h1>
+
+    <!-- Upload section -->
+    <div id="upload-section">
+        <p>Upload CSV files for each parent (columns: Name, Gender, Nicknames)</p>
+        <input type="file" id="user1file" accept=".csv">
+        <input type="file" id="user2file" accept=".csv">
+        <button id="start-btn">Start Swiping</button>
+    </div>
+
+    <!-- Filter section -->
+    <div id="filter-section" style="display:none;">
+        <label for="gender-filter">Filter by Gender:</label>
+        <select id="gender-filter">
+            <option value="all">All</option>
+            <option value="M">Boys</option>
+            <option value="F">Girls</option>
+        </select>
+        <div>
+            <input type="checkbox" id="show-nicknames" checked>
+            <label for="show-nicknames">Show Nicknames</label>
+        </div>
+    </div>
+
+    <!-- Swipe section -->
+    <div id="swipe-section" style="display:none;">
+        <!-- Cards inserted dynamically here -->
+        <div id="buttons">
+            <button id="dislike-btn">❌ Dislike</button>
+            <button id="like-btn">❤️ Like</button>
+        </div>
+        <p id="turn"></p>
+    </div>
+
+    <!-- Matches section -->
+    <div id="matches-section" style="display:none;">
+        <h2>Matches!</h2>
+        <ul id="matches-list"></ul>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

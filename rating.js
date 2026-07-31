@@ -609,4 +609,5 @@ document
             showScreen("rating");
 
         }
+	window.undoRating = undoRating;
     );

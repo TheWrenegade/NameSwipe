@@ -611,7 +611,6 @@ document
 
 
         }
-    );
 
             // Restart local state
 
@@ -629,5 +628,5 @@ document
 
             showScreen("rating");
 
-
+		}
     );

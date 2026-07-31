@@ -570,7 +570,6 @@ document
         "click",
         async () => {
 
-
             const newOrder =
                 shuffleArray(
                     [...sampleNames]
@@ -611,22 +610,4 @@ document
 
 
         }
-
-            // Restart local state
-
-            shuffledNames =
-                shuffleArray(
-                    [...sampleNames]
-                );
-
-
-            currentIndex = 0;
-
-
-            displayCurrentName();
-
-
-            showScreen("rating");
-
-		}
     );

@@ -647,5 +647,5 @@ document
             showScreen("rating");
 
         }
-	window.undoRating = undoRating;
     );
+window.undoRating = undoRating;

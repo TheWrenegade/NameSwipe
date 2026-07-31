@@ -608,6 +608,5 @@ document
 
             showScreen("rating");
 
-
         }
     );

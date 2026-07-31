@@ -630,5 +630,4 @@ document
             showScreen("rating");
 
 
-        }
     );

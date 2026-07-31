@@ -20,197 +20,145 @@ let selectedRating = null;
 let previousAction = null;
 
 /* ==================================
-   Local Storage
+   Firebase Storage
    ================================== */
 
 const STORAGE_KEY = "babyNameProgress";
 
 
-function saveProgress() {
+function getCurrentRatings() {
 
-    let progress =
-        JSON.parse(
-            localStorage.getItem(STORAGE_KEY)
-        ) || {};
-
-
-    if (!progress.users) {
-
-        progress.users = {};
-
-    }
-
-
-    if (!progress.users[appState.currentUser]) {
-
-        progress.users[appState.currentUser] = {};
-
-    }
-
-
-    progress.users[appState.currentUser] = {
-
-        currentIndex: currentIndex,
-
-        order: shuffledNames.map(
-            name => name.name
-        ),
-
-        ratings: {}
-
-    };
+    const ratings = {};
 
 
     shuffledNames.forEach(name => {
 
-
-        progress.users[
-            appState.currentUser
-        ].ratings[name.name] = {
-
+        ratings[name.name] = {
 
             rating:
                 name.userRating || null,
 
-
             notes:
                 name.userNotes || ""
 
-
         };
-
 
     });
 
 
-    localStorage.setItem(
-        STORAGE_KEY,
-        JSON.stringify(progress)
-    );
+    return ratings;
 
 }
+
+
+
+function saveProgress() {
+
+
+    const progress = {
+
+        currentIndex:
+            currentIndex,
+
+        order:
+            shuffledNames.map(
+                name => name.name
+            ),
+
+        ratings:
+            getCurrentRatings()
+
+    };
+
+
+    return database
+        .ref(
+            "users/" + appState.currentUser
+        )
+        .set(progress);
+
+
+}
+
 
 
 function loadProgress() {
 
 
-    const saved =
-        localStorage.getItem(STORAGE_KEY);
+    return database
+        .ref(
+            "users/" + appState.currentUser
+        )
+        .once("value")
+        .then(snapshot => {
 
 
-    if (!saved) {
-
-        return false;
-
-    }
+            const progress =
+                snapshot.val();
 
 
-    const progress =
-        JSON.parse(saved);
+            if (!progress) {
 
+                return false;
 
-    const userProgress =
-        progress.users?.[appState.currentUser];
-
-
-    if (!userProgress) {
-
-        return false;
-
-    }
-
-
-    shuffledNames =
-        userProgress.order
-            .map(savedName =>
-                sampleNames.find(
-                    name =>
-                        name.name === savedName
-                )
-            )
-            .filter(Boolean);
+            }
 
 
 
-    shuffledNames.forEach(name => {
-
-
-        const savedRating =
-            userProgress.ratings[name.name];
-
-
-        if (savedRating) {
-
-
-            name.userRating =
-                savedRating.rating;
-
-
-            name.userNotes =
-                savedRating.notes;
-
-
-        }
-
-
-    });
+            shuffledNames =
+                progress.order
+                    .map(savedName =>
+                        sampleNames.find(
+                            name =>
+                                name.name === savedName
+                        )
+                    )
+                    .filter(Boolean);
 
 
 
-    currentIndex =
-        userProgress.currentIndex || 0;
+            Object.keys(
+                progress.ratings || {}
+            ).forEach(nameKey => {
+
+
+                const saved =
+                    progress.ratings[nameKey];
+
+
+                const name =
+                    shuffledNames.find(
+                        name =>
+                            name.name === nameKey
+                    );
+
+
+                if (name) {
+
+                    name.userRating =
+                        saved.rating;
+
+
+                    name.userNotes =
+                        saved.notes;
+
+                }
+
+
+            });
 
 
 
-    return true;
-
-}
-
-function updateProgress() {
+            currentIndex =
+                progress.currentIndex || 0;
 
 
-    const total =
-        shuffledNames.length;
+
+            return true;
 
 
-    const rated =
-        shuffledNames.filter(
-            name => name.userRating
-        ).length;
+        });
 
-
-    const percent =
-        total === 0
-        ? 0
-        : Math.round(
-            (rated / total) * 100
-        );
-
-
-    document.getElementById(
-        "progress-count"
-    ).textContent =
-        `${rated} / ${total} Rated`;
-
-
-    document.getElementById(
-        "progress-percent"
-    ).textContent =
-        `${percent}%`;
-
-
-    const fill =
-        document.getElementById(
-            "progress-fill"
-        );
-
-
-    if (fill) {
-
-        fill.style.width =
-            `${percent}%`;
-
-    }
 
 }
 
@@ -223,7 +171,7 @@ async function initializeRatings() {
 
 
     const resumed =
-        loadProgress();
+        await loadProgress();
 
 
     if (!resumed) {
@@ -621,47 +569,50 @@ document
     .getElementById("restart-btn")
     .addEventListener(
         "click",
-        () => {
+        async () => {
 
-            const saved =
-                JSON.parse(
-                    localStorage.getItem(
-                        STORAGE_KEY
-                    )
+
+            const newOrder =
+                shuffleArray(
+                    [...sampleNames]
                 );
 
 
-            if (
-                saved &&
-                saved.users &&
-                appState.currentUser
-            ) {
+            shuffledNames =
+                newOrder;
 
-                // Clear only current user's ratings
-                saved.users[
-                    appState.currentUser
-                ] = {
+
+            currentIndex = 0;
+
+
+
+            await database
+                .ref(
+                    "users/" + appState.currentUser
+                )
+                .set({
 
                     currentIndex: 0,
 
-                    order: shuffleArray(
-                        [...sampleNames]
-                    ).map(
-                        name => name.name
-                    ),
+                    order:
+                        shuffledNames.map(
+                            name => name.name
+                        ),
 
                     ratings: {}
 
-                };
+                });
 
 
-                localStorage.setItem(
-                    STORAGE_KEY,
-                    JSON.stringify(saved)
-                );
 
-            }
+            displayCurrentName();
 
+
+            showScreen("rating");
+
+
+        }
+    );
 
             // Restart local state
 

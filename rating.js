@@ -149,8 +149,7 @@ function loadProgress() {
 
 
 
-            currentIndex =
-                progress.currentIndex || 0;
+            currentIndex = findNextUnratedName();
 
 
 

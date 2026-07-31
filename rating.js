@@ -526,8 +526,8 @@ function moveToNextName() {
 
 
 	setTimeout(() => {
-		showScreen("login");
-	}, 1000);
+    	displayCurrentName();
+	}, 150);
 
 
 }

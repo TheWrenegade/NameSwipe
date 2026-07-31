@@ -346,3 +346,114 @@ document
 
         }
     );
+document
+    .getElementById("export-btn")
+    .addEventListener(
+        "click",
+        exportShortlist
+    );
+
+
+function exportShortlist() {
+
+    const results =
+        compareRatings();
+
+
+    const shortlist =
+        results.filter(name => {
+
+            const ratings = [
+                name.wren,
+                name.elijah
+            ];
+
+
+            return (
+                ratings.includes("love") ||
+                ratings.includes("like") ||
+                ratings.includes("maybe")
+            );
+
+        });
+
+
+
+    let csv =
+        "Name,Wren Rating,Elijah Rating,Wren Notes,Elijah Notes\n";
+
+
+    shortlist.forEach(name => {
+
+
+        csv += [
+            name.name,
+            name.wren || "",
+            name.elijah || "",
+            escapeCSV(name.wrenNotes),
+            escapeCSV(name.elijahNotes)
+
+        ].join(",") + "\n";
+
+
+    });
+
+
+
+    downloadCSV(
+        csv,
+        "Baby_Name_Shortlist.csv"
+    );
+
+}
+
+
+
+function escapeCSV(value) {
+
+    if (!value) {
+        return "";
+    }
+
+
+    return `"${value.replaceAll('"','""')}"`;
+
+}
+
+
+
+function downloadCSV(
+    csv,
+    filename
+) {
+
+    const blob =
+        new Blob(
+            [csv],
+            {
+                type:
+                "text/csv"
+            }
+        );
+
+
+    const url =
+        URL.createObjectURL(blob);
+
+
+    const link =
+        document.createElement("a");
+
+
+    link.href = url;
+
+    link.download =
+        filename;
+
+
+    link.click();
+
+
+    URL.revokeObjectURL(url);
+
+}

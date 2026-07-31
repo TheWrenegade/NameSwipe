@@ -2,6 +2,7 @@
 const firebaseConfig = {
   apiKey: "AIzaSyCLcUaI74zPK9TP9pV-pYY15CbtoiwCsXg",
   authDomain: "baby-name-picker-fe571.firebaseapp.com",
+  databaseurl: "https://baby-name-picker-fe571-default-rtdb.firebaseio.com",
   projectId: "baby-name-picker-fe571",
   storageBucket: "baby-name-picker-fe571.firebasestorage.app",
   messagingSenderId: "714898625809",

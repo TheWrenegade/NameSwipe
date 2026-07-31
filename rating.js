@@ -166,77 +166,152 @@ function loadProgress() {
    ================================== */
 
 
-async function initializeRatings() {
+async function loadProgress() {
+
+    const loadedNames =
+        await loadNamesFromSheet();
+
+    sampleNames =
+        loadedNames;
 
 
-    const resumed =
-        await loadProgress();
+    const snapshot =
+        await database
+            .ref(
+                "users/" + appState.currentUser
+            )
+            .once("value");
 
 
-    if (!resumed) {
+    const progress =
+        snapshot.val();
 
 
-        const loadedNames =
-			await loadNamesFromSheet();
+    // No previous progress = start fresh
+    if (!progress) {
 
-		sampleNames =
-			loadedNames;
+        shuffledNames =
+            shuffleArray(
+                [...sampleNames]
+            );
 
+        currentIndex = 0;
 
-		shuffledNames =
-			shuffleArray([...sampleNames]);
-
-
-        currentIndex =
-            0;
+        return false;
 
     }
 
 
-    appState.names =
-        shuffledNames;
+    /*
+       Restore existing order
+    */
+
+    shuffledNames =
+        progress.order
+            .map(savedName =>
+                sampleNames.find(
+                    name =>
+                        name.name === savedName
+                )
+            )
+            .filter(Boolean);
 
 
-    displayCurrentName();
 
-	updateProgress();
+    /*
+       Add new names from spreadsheet
+    */
 
-    setupRatingButtons();
-
-
-    document
-    .getElementById("user-notes")
-    .addEventListener(
-        "input",
-        () => {
-
-
-            const name =
-                shuffledNames[currentIndex];
+    const existingNames =
+        new Set(
+            shuffledNames.map(
+                name => name.name
+            )
+        );
 
 
-            if (!name) {
+    const newNames =
+        sampleNames.filter(
+            name =>
+                !existingNames.has(name.name)
+        );
 
-                return;
 
-            }
+    if (newNames.length > 0) {
+
+        console.log(
+            "Adding new names:",
+            newNames.map(
+                name => name.name
+            )
+        );
+
+
+        shuffledNames.push(
+            ...shuffleArray(newNames)
+        );
+
+    }
+
+
+
+    /*
+       Restore ratings
+    */
+
+    Object.keys(
+        progress.ratings || {}
+    ).forEach(nameKey => {
+
+
+        const saved =
+            progress.ratings[nameKey];
+
+
+        const name =
+            shuffledNames.find(
+                name =>
+                    name.name === nameKey
+            );
+
+
+        if (name) {
+
+            name.userRating =
+                saved.rating;
 
 
             name.userNotes =
-                document.getElementById(
-                    "user-notes"
-                ).value;
-
-
-            saveProgress();
-
+                saved.notes;
 
         }
-    );
 
+
+    });
+
+
+
+    /*
+       Find next unfinished name
+    */
+
+    currentIndex =
+        findNextUnratedName();
+
+
+
+    /*
+       Save updated list back
+       so new names persist
+    */
+
+    await saveProgress();
+
+
+
+    return true;
 
 }
-
 
 
 /* ==================================

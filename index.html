@@ -2,52 +2,407 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Baby Name Tinder</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Baby Name Picker</title>
+
+    <link rel="stylesheet" href="styles.css">
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
 </head>
+
 <body>
-    <h1>Baby Name Tinder 💖</h1>
 
-    <!-- Upload section -->
-    <div id="upload-section">
-        <p>Upload CSV files for each parent (columns: Name, Gender, Nicknames)</p>
-        <input type="file" id="user1file" accept=".csv">
-        <input type="file" id="user2file" accept=".csv">
-        <button id="start-btn">Start Swiping</button>
-    </div>
-
-    <!-- Filter section -->
-    <div id="filter-section" style="display:none;">
-        <label for="gender-filter">Filter by Gender:</label>
-        <select id="gender-filter">
-            <option value="all">All</option>
-            <option value="M">Boys</option>
-            <option value="F">Girls</option>
-        </select>
-        <div>
-            <input type="checkbox" id="show-nicknames" checked>
-            <label for="show-nicknames">Show Nicknames</label>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="screen active">
+        <div class="loading-container">
+            <h1>Baby Name Picker</h1>
+            <p>Loading names...</p>
         </div>
     </div>
 
-    <!-- Swipe section -->
-    <div id="swipe-section" style="display:none;">
-        <!-- Cards inserted dynamically here -->
-        <div id="buttons">
-            <button id="dislike-btn">❌ Dislike</button>
-            <button id="like-btn">❤️ Like</button>
+
+    <!-- User Selection -->
+    <div id="login-screen" class="screen hidden">
+
+        <div class="card login-card">
+
+            <h1>Who's Rating?</h1>
+
+            <button class="user-btn" data-user="wren">
+                👩 Wren
+            </button>
+
+            <button class="user-btn" data-user="elijah">
+                ❤️ Elijah
+            </button>
+
         </div>
-        <p id="turn"></p>
+
     </div>
 
-    <!-- Matches section -->
-    <div id="matches-section" style="display:none;">
-        <h2>Matches!</h2>
-        <ul id="matches-list"></ul>
+
+    <!-- Main Rating Screen -->
+    <main id="rating-screen" class="screen hidden">
+
+        <header>
+
+            <h2>Baby Name Picker</h2>
+
+            <p id="current-user-display"></p>
+
+            <button id="menu-button">
+                ☰
+            </button>
+
+        </header>
+
+
+        <!-- Progress -->
+        <section class="progress-section">
+
+            <div class="progress-text">
+
+                <span id="progress-count">
+                    0 / 0 Rated
+                </span>
+
+                <span id="progress-percent">
+                    0%
+                </span>
+
+            </div>
+
+            <div class="progress-bar">
+
+                <div id="progress-fill"></div>
+
+            </div>
+
+        </section>
+
+
+        <!-- Name Card -->
+        <section id="name-card" class="card animate">
+
+            <div class="pill" id="sex-pill">
+                Girl
+            </div>
+
+            <h1 id="name">
+                Charlotte
+            </h1>
+
+            <div id="pronunciation"></div>
+
+
+            <div class="info-grid">
+
+                <div class="info-item">
+                    <label>Origin</label>
+                    <p id="origin">French</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Popularity</label>
+                    <p id="ranking">#4</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Syllables</label>
+                    <p id="syllables">2</p>
+                </div>
+
+                <div class="info-item">
+                    <label>Nicknames</label>
+                    <p id="nicknames">
+                        Charlie, Lottie
+                    </p>
+                </div>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>Reference</label>
+
+                <p id="reference">—</p>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>Acquaintance</label>
+
+                <p id="acquaintance">
+                    None
+                </p>
+
+            </div>
+
+
+            <div class="detail">
+
+                <label>General Notes</label>
+
+                <p id="general-notes">
+                    —
+                </p>
+
+            </div>
+
+
+            <div class="notes-box">
+
+                <label for="user-notes">
+                    Your Notes
+                </label>
+
+                <textarea
+                    id="user-notes"
+                    rows="4"
+                    placeholder="Write anything you'd like to remember..."></textarea>
+
+            </div>
+
+        </section>
+
+
+        <!-- Rating Buttons -->
+        <section class="rating-buttons">
+
+            <button id="love-button"
+                    class="rating love"
+                    data-rating="love"
+                    title="Shortcut: 1">
+
+                ❤️
+                <span>Love</span>
+
+            </button>
+
+
+            <button id="like-button"
+                    class="rating like"
+                    data-rating="like"
+                    title="Shortcut: 2">
+
+                👍
+                <span>Like</span>
+
+            </button>
+
+
+            <button id="maybe-button"
+                    class="rating maybe"
+                    data-rating="maybe"
+                    title="Shortcut: 3">
+
+                🤔
+                <span>Maybe</span>
+
+            </button>
+
+
+            <button id="pass-button"
+                    class="rating pass"
+                    data-rating="pass"
+                    title="Shortcut: 4">
+
+                👎
+                <span>Pass</span>
+
+            </button>
+
+
+            <button id="skip-button"
+                    class="rating skip"
+                    title="Shortcut: S">
+
+                ⏭️
+                <span>Skip</span>
+
+            </button>
+
+        </section>
+
+    </main>
+	
+	<!-- Finished Screen -->
+
+	<section id="finished-screen" class="screen hidden">
+
+		<div class="card finished-card">
+
+			<h1>🎉 All Done!</h1>
+
+			<p>
+            You've rated all the names.
+			</p>
+
+			<button id="view-results-btn">
+            ❤️ View Results
+			</button>
+
+			<button id="restart-btn">
+            🔄 Start Over
+			</button>
+
+		</div>
+
+	</section>
+
+
+    <!-- Side Menu -->
+    <aside id="side-menu" class="hidden">
+
+        <nav>
+
+            <button id="browse-btn">
+                📖 Browse Names
+            </button>
+
+            <button id="results-btn">
+                ❤️ Results
+            </button>
+
+            <button id="filters-btn">
+                🔍 Filters
+            </button>
+
+            <button id="resume-btn">
+                ▶ Resume Rating
+            </button>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- Browse Screen -->
+    <section id="browse-screen" class="screen hidden">
+
+        <header>
+
+            <h2>Browse</h2>
+
+            <button class="back-button">
+                ←
+            </button>
+
+        </header>
+
+        <input
+            type="search"
+            id="search"
+            placeholder="Search names...">
+
+        <div id="browse-list"></div>
+
+    </section>
+
+
+    <!-- Results Screen -->
+    <section id="results-screen" class="screen hidden">
+
+		<header>
+
+			<h2>Your Matches</h2>
+
+			<button class="back-button">
+				←
+			</button>
+
+		</header>
+
+
+		<div class="results-group">
+
+			<h3>
+				❤️  Strong Matches
+			</h3>
+
+			<div id="strong-matches-list"></div>
+
+		</div>
+
+
+
+		<div class="results-group">
+
+			<h3>
+				👍 Agreeable Matches
+			</h3>
+
+			<div id="agreeable-matches-list"></div>
+
+		</div>
+
+
+
+		<div class="results-group">
+
+			<h3>
+				🤔 Discuss
+			</h3>
+
+			<div id="discuss-list"></div>
+
+		</div>
+
+
+	</section>
+
+
+    <!-- Skip Confirmation Modal -->
+    <div id="confirmation-modal" class="hidden">
+
+        <div class="card">
+
+            <h3>
+                Skip this name?
+            </h3>
+
+            <button id="confirm-skip">
+                Yes, skip
+            </button>
+
+            <button id="cancel-skip">
+                Cancel
+            </button>
+
+        </div>
+
     </div>
+
+
+    <!-- Keyboard Help -->
+    <div id="keyboard-help">
+
+        <span>Keyboard Shortcuts</span>
+
+        <span><kbd>1</kbd> Love</span>
+        <span><kbd>2</kbd> Like</span>
+        <span><kbd>3</kbd> Maybe</kbd></span>
+        <span><kbd>4</kbd> Pass</span>
+        <span><kbd>S</kbd> Skip</span>
+        <span><kbd>N</kbd> Notes</span>
+
+    </div>
+
 
     <!-- Scripts -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-    <script src="script.js"></script>
+
+    <script src="api.js"></script>
+    <script src="ui.js"></script>
+	<script src="app.js"></script>
+	<script src="rating.js"></script>
+	<script src="browse.js"></script>
+	<script src="results.js"></script>
+
 </body>
 </html>

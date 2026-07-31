@@ -1,0 +1,692 @@
+/* ==============================
+   Global Styles
+   ============================== */
+
+:root {
+    --background: #faf7f2;
+    --card-background: #ffffff;
+    --text: #2d2a26;
+    --muted-text: #77716a;
+    --border: #e8e0d7;
+
+    --love: #d95f76;
+    --like: #7a9e7e;
+    --maybe: #d9a441;
+    --pass: #9a9895;
+    --skip: #8c7aa9;
+
+    --shadow:
+        0 10px 30px rgba(0, 0, 0, 0.08);
+
+    --radius: 18px;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    background: var(--background);
+
+    color: var(--text);
+
+    font-family:
+        "Inter",
+        system-ui,
+        sans-serif;
+
+    display: flex;
+    justify-content: center;
+}
+
+
+/* ==============================
+   Screens
+   ============================== */
+
+
+.screen {
+    width: 100%;
+    max-width: 700px;
+    min-height: 100vh;
+
+    padding: 24px;
+
+}
+
+
+.hidden {
+    display: none !important;
+}
+
+
+.active {
+    display: flex;
+}
+
+
+
+/* ==============================
+   Loading Screen
+   ============================== */
+
+
+#loading-screen {
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+}
+
+
+.loading-container h1 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size: 2.5rem;
+
+}
+
+
+
+/* ==============================
+   Cards
+   ============================== */
+
+
+.card {
+
+    background:
+        var(--card-background);
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        var(--radius);
+
+    padding:
+        24px;
+
+    box-shadow:
+        var(--shadow);
+
+}
+
+
+
+/* ==============================
+   Login
+   ============================== */
+
+
+.login-card {
+
+    margin-top: 30vh;
+
+    text-align: center;
+
+}
+
+
+.login-card h1 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    margin-bottom:
+        30px;
+
+}
+
+
+.user-btn {
+
+    width: 100%;
+
+    padding: 18px;
+
+    margin-bottom: 12px;
+
+    border-radius: 12px;
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    font-size: 1.1rem;
+
+    cursor: pointer;
+
+}
+
+
+
+/* ==============================
+   Header
+   ============================== */
+
+
+header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 20px;
+
+}
+
+
+header h2 {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    margin: 0;
+
+}
+
+
+#current-user-display {
+
+    color:
+        var(--muted-text);
+
+    font-size:
+        .9rem;
+
+}
+
+
+
+#menu-button {
+
+    border: none;
+
+    background: transparent;
+
+    font-size: 1.5rem;
+
+    cursor: pointer;
+
+}
+
+
+
+/* ==============================
+   Progress
+   ============================== */
+
+
+.progress-section {
+
+    margin-bottom: 20px;
+
+}
+
+
+.progress-text {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    color: var(--muted-text);
+
+    font-size: .9rem;
+
+    margin-bottom: 8px;
+
+}
+
+
+.progress-bar {
+
+    height: 8px;
+
+    background:
+        var(--border);
+
+    border-radius:
+        99px;
+
+    overflow: hidden;
+
+}
+
+
+#progress-fill {
+
+    height: 100%;
+
+    width: 0%;
+
+    border-radius:
+        99px;
+
+    background:
+        var(--love);
+
+}
+
+
+
+/* ==============================
+   Name Card
+   ============================== */
+
+
+#name-card {
+
+    text-align: center;
+
+}
+
+
+#name {
+
+    font-family:
+        "Playfair Display",
+        serif;
+
+    font-size:
+        3rem;
+
+    margin:
+        12px 0;
+
+}
+
+
+.pill {
+
+    display: inline-block;
+
+    padding:
+        6px 14px;
+
+    border-radius:
+        99px;
+
+    background:
+        #f1ebe3;
+
+    color:
+        var(--muted-text);
+
+    font-size:
+        .85rem;
+
+}
+
+
+
+/* ==============================
+   Info Grid
+   ============================== */
+
+
+.info-grid {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap:
+        16px;
+
+    margin:
+        25px 0;
+
+}
+
+
+.info-item label,
+.detail label,
+.notes-box label {
+
+    display:
+        block;
+
+    font-size:
+        .75rem;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .05em;
+
+    color:
+        var(--muted-text);
+
+}
+
+
+.info-item p,
+.detail p {
+
+    margin:
+        5px 0 0;
+
+}
+
+.results-group {
+    margin: 20px;
+}
+
+
+.result-card {
+
+    background: white;
+
+    border-radius: 16px;
+
+    padding: 16px;
+
+    margin-bottom: 12px;
+
+}
+
+
+.result-card h4 {
+
+    font-size: 1.4rem;
+
+    margin-top: 0;
+
+}
+
+
+.result-notes {
+
+    border-top: 1px solid #ddd;
+
+    margin-top: 12px;
+
+    padding-top: 12px;
+
+}
+
+/* ==============================
+   Notes
+   ============================== */
+
+
+textarea {
+
+    width: 100%;
+
+    margin-top:
+        8px;
+
+    padding:
+        12px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    resize:
+        vertical;
+
+    font:
+        inherit;
+
+}
+
+
+
+/* ==============================
+   Rating Buttons
+   ============================== */
+
+
+.rating-buttons {
+
+    display:
+        grid;
+
+    grid-template-columns:
+        repeat(5, 1fr);
+
+    gap:
+        10px;
+
+    margin-top:
+        20px;
+
+}
+
+
+.rating {
+
+    border:
+        none;
+
+    border-radius:
+        14px;
+
+    padding:
+        12px 6px;
+
+    cursor:
+        pointer;
+
+    background:
+        white;
+
+    border:
+        1px solid var(--border);
+
+    font-size:
+        1.4rem;
+
+}
+
+
+.rating span {
+
+    display:
+        block;
+
+    font-size:
+        .7rem;
+
+    margin-top:
+        5px;
+
+}
+
+
+.rating:hover {
+
+    transform:
+        translateY(-2px);
+
+}
+
+
+
+.love:hover {
+    background: #fae2e7;
+}
+
+.like:hover {
+    background: #e3eee4;
+}
+
+.maybe:hover {
+    background: #fbf1d8;
+}
+
+.pass:hover {
+    background: #eeeeee;
+}
+
+.skip:hover {
+    background: #eee8f5;
+}
+
+.finished-card {
+    text-align: center;
+    max-width: 400px;
+    margin: auto;
+}
+
+.finished-card button {
+    width: 100%;
+    margin-top: 12px;
+}
+
+/* ==============================
+   Keyboard Help
+   ============================== */
+
+
+#keyboard-help {
+
+    position:
+        fixed;
+
+    bottom:
+        12px;
+
+    left:
+        50%;
+
+    transform:
+        translateX(-50%);
+
+    background:
+        white;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        12px;
+
+    padding:
+        10px 14px;
+
+    box-shadow:
+        var(--shadow);
+
+    display:
+        flex;
+
+    gap:
+        12px;
+
+    font-size:
+        .75rem;
+
+}
+
+
+kbd {
+
+    background:
+        #f0ece6;
+
+    padding:
+        3px 6px;
+
+    border-radius:
+        5px;
+
+}
+
+
+
+/* ==============================
+   Modal
+   ============================== */
+
+
+#confirmation-modal {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    background:
+        rgba(0,0,0,.25);
+
+    display:
+        flex;
+
+    justify-content:
+        center;
+
+    align-items:
+        center;
+
+    padding:
+        20px;
+
+}
+
+
+
+/* ==============================
+   Mobile Adjustments
+   ============================== */
+
+
+@media (max-width: 600px) {
+
+
+    .screen {
+
+        padding:
+            16px;
+
+    }
+
+
+    #name {
+
+        font-size:
+            2.4rem;
+
+    }
+
+
+    .rating-buttons {
+
+        grid-template-columns:
+            repeat(3, 1fr);
+
+    }
+
+
+    #keyboard-help {
+
+        display:
+            none;
+
+    }
+
+}

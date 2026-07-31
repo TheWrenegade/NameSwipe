@@ -166,6 +166,54 @@ function loadProgress() {
 
 }
 
+function updateProgress() {
+
+
+    const total =
+        shuffledNames.length;
+
+
+    const rated =
+        shuffledNames.filter(
+            name => name.userRating
+        ).length;
+
+
+    const percent =
+        total === 0
+        ? 0
+        : Math.round(
+            (rated / total) * 100
+        );
+
+
+    document.getElementById(
+        "progress-count"
+    ).textContent =
+        `${rated} / ${total} Rated`;
+
+
+    document.getElementById(
+        "progress-percent"
+    ).textContent =
+        `${percent}%`;
+
+
+    const fill =
+        document.getElementById(
+            "progress-fill"
+        );
+
+
+    if (fill) {
+
+        fill.style.width =
+            `${percent}%`;
+
+    }
+
+}
+
 /* ==================================
    Initialize Rating System
    ================================== */
@@ -204,6 +252,7 @@ async function initializeRatings() {
 
     displayCurrentName();
 
+	updateProgress();
 
     setupRatingButtons();
 
@@ -424,6 +473,7 @@ function rateName(rating) {
 
 
     saveProgress();
+	updateProgress();
 
 
     selectedRating =
@@ -481,6 +531,9 @@ function skipName() {
 
 
     moveToNextName();
+
+	saveProgress();
+	updateProgress();
 
 }
 

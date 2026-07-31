@@ -362,8 +362,13 @@ function handleKeyboard(event) {
 
             break;
 
+		case "u":
 
-    }
+		    undoRating();
+		
+		    break;
+
+	   }
 
 
 }
@@ -416,5 +421,6 @@ function skipName() {
 
 window.appState = appState;
 window.showScreen = showScreen;
+window.undoRating = undoRating;
 window.rateName = rateName;
 window.skipName = skipName;

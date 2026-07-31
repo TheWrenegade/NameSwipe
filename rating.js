@@ -17,6 +17,8 @@ let shuffledNames = [];
 
 let selectedRating = null;
 
+let previousAction = null;
+
 /* ==================================
    Local Storage
    ================================== */
@@ -379,6 +381,13 @@ function setupRatingButtons() {
             skipName
         );
 
+	document
+	    .getElementById("undo-button")
+	    .addEventListener(
+	        "click",
+	        undoRating
+	    );
+
 
 }
 
@@ -397,6 +406,12 @@ function rateName(rating) {
         rating
     );
 
+	previousAction = {
+	    index: currentIndex,
+	    name: name.name,
+	    oldRating: name.userRating || null,
+	    oldNotes: name.userNotes || ""
+	};
 
     name.userRating =
         rating;
@@ -420,7 +435,41 @@ function rateName(rating) {
 
 }
 
+function undoRating() {
 
+    if (!previousAction) {
+
+        console.log("Nothing to undo");
+        return;
+
+    }
+
+
+    const name =
+        shuffledNames[previousAction.index];
+
+
+    name.userRating =
+        previousAction.oldRating;
+
+
+    name.userNotes =
+        previousAction.oldNotes;
+
+
+    currentIndex =
+        previousAction.index;
+
+
+    saveProgress();
+
+
+    displayCurrentName();
+
+
+    previousAction = null;
+
+}
 
 function skipName() {
 

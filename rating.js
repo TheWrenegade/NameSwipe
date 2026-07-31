@@ -270,6 +270,44 @@ function findNextUnratedName() {
 
 }
 
+function updateProgress() {
+
+    const total =
+        shuffledNames.length;
+
+    const rated =
+        shuffledNames.filter(
+            name => name.userRating
+        ).length;
+
+
+    document.getElementById(
+        "progress-count"
+    ).textContent =
+        `${rated} / ${total} Rated`;
+
+
+    const percent =
+        total === 0
+            ? 0
+            : Math.round(
+                (rated / total) * 100
+            );
+
+
+    document.getElementById(
+        "progress-percent"
+    ).textContent =
+        `${percent}%`;
+
+
+    document.getElementById(
+        "progress-fill"
+    ).style.width =
+        `${percent}%`;
+
+}
+
 /* ==================================
    Display Name
    ================================== */

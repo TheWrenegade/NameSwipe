@@ -223,46 +223,44 @@ console.log(
        Restore ratings
     */
 
-    Object.keys(
-        progress.ratings || {}
-    ).forEach(nameKey => {
+   Object.keys(
+    progress.ratings || {}
+).forEach(nameKey => {
 
-	console.log(
-	    "Restoring rating:",
-	    nameKey,
-	    JSON.stringify(progress.ratings[nameKey])
-	);
+    const saved =
+        progress.ratings[nameKey];
 
-        const saved =
-            progress.ratings[nameKey];
-
-
-        const name =
-            shuffledNames.find(
-                name =>
-                    name.name === nameKey
-            );
+    console.log(
+        "TRYING RESTORE:",
+        nameKey,
+        JSON.stringify(saved)
+    );
 
 
-        if (name) {
-
-			console.log(
-			    "Matched name:",
-			    name.name
-			);
-			
-            name.userRating =
-                saved.rating;
+    const name =
+        shuffledNames.find(
+            name =>
+                name.name === nameKey
+        );
 
 
-            name.userNotes =
-                saved.notes;
+    console.log(
+        "FOUND MATCH:",
+        name
+    );
 
-        }
 
+    if (name) {
 
-    });
+        name.userRating =
+            saved.rating;
 
+        name.userNotes =
+            saved.notes;
+
+    }
+
+});
 
 
     /*

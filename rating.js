@@ -131,6 +131,19 @@ async function loadProgress() {
 	
 	const progress =
     	snapshot.val();
+
+	if (!progress) {
+
+    shuffledNames =
+        shuffleArray([...sampleNames]);
+
+    currentIndex = 0;
+
+    await saveProgress();
+
+    return false;
+
+}
 	
     console.log(
         "Firebase data:",

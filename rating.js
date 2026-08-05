@@ -258,6 +258,11 @@ async function loadProgress() {
     currentIndex =
         findNextUnratedName();
 
+	console.log(
+	    "Restored names:",
+	    shuffledNames.filter(name => name.userRating)
+	);
+
 
 
     /*

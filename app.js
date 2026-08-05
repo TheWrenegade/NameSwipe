@@ -177,16 +177,12 @@ function setupUserSelection() {
 
 function selectUser(user) {
 
-
-    appState.currentUser =
-        user;
-
+    appState.currentUser = user;
 
     console.log(
         "Current user:",
         user
     );
-
 
     if (currentUserDisplay) {
 
@@ -194,15 +190,14 @@ function selectUser(user) {
             user.charAt(0).toUpperCase()
             + user.slice(1);
 
-
-		currentUserDisplay.textContent =
-			"Rating as " + displayName;
+        currentUserDisplay.textContent =
+            "Rating as " + displayName;
 
     }
 
-
     showScreen("rating");
 
+    initializeRatings();
 
 }
 

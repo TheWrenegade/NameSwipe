@@ -31,7 +31,7 @@ function getCurrentRatings() {
         ratings[name.name] = {
 
             rating:
-                name.userRating || null,
+                name.userRating ?? null,
 
             notes:
                 name.userNotes || ""

@@ -117,26 +117,24 @@ async function loadProgress() {
     sampleNames = loadedNames;
 
 
-	
+	console.log(
+	    "FULL FIREBASE PATH:",
+	    "users/" + appState.currentUser
+	);
 
     const snapshot =
         await database
             .ref("users/" + appState.currentUser)
             .once("value");
 
-	console.log(
-	    "FULL FIREBASE PATH:",
-	    "users/" + appState.currentUser
-	);
+	const progress =
+    	snapshot.val();
 	
 	console.log(
 	    "FULL FIREBASE DATA:",
 	    JSON.stringify(progress, null, 2)
 	);
 	
-	const progress =
-    	snapshot.val();
-
 	if (!progress) {
 
     shuffledNames =

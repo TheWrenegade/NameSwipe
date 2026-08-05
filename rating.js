@@ -646,12 +646,6 @@ function clearRatingState() {
    Start When App Loads
    ================================== */
 
-
-document.addEventListener(
-    "DOMContentLoaded",
-    initializeRatings
-);
-
 document
     .getElementById("restart-btn")
     .addEventListener(

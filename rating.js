@@ -143,17 +143,13 @@ async function loadProgress() {
 
 }
 
-console.log(
-	 "Saved order:",
-	progress.order?.slice(0, 10),
-	"Length:",
-	progress.order?.length
-);
-
-
     /*
        Restore existing order
     */
+	console.log(
+	    "RAW FIREBASE RATINGS:",
+	    progress.ratings
+	);
 
     shuffledNames =
         progress.order
@@ -256,14 +252,6 @@ console.log(
     /*
        Find next unfinished name
     */
-	console.log(
-	    "CHECK RATINGS:",
-	    shuffledNames.slice(0,10).map(name => ({
-	        name: name.name,
-	        rating: name.userRating,
-	        notes: name.userNotes
-	    }))
-	);
 		
     currentIndex =
         findNextUnratedName();
@@ -280,7 +268,7 @@ console.log(
        so new names persist
     */
 
-    await saveProgress();
+    /* await saveProgress(); */
 
 
 

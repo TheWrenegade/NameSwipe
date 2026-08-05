@@ -303,10 +303,14 @@ async function exportShortlist() {
 
     const results = compareRatings(data);
 
-    const shortlist = results.filter(item =>
-        item.wren !== "pass" &&
-        item.elijah !== "pass"
-    );
+	const shortlist = results.filter(item => {
+	
+	    return (
+	        item.wren !== "pass" &&
+	        item.elijah !== "pass"
+	    );
+	
+	});
 
     let csv =
         "Name,Wren Rating,Elijah Rating,Wren Notes,Elijah Notes\n";

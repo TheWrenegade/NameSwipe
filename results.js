@@ -2,55 +2,31 @@
    Baby Name Picker - Results
    ================================== */
 
+async function getResultsData() {
 
-const RESULTS_STORAGE_KEY =
-    "babyNameProgress";
+    const snapshot =
+        await database
+            .ref("users")
+            .once("value");
 
-
-
-function getResultsData() {
-
-
-    const saved =
-        localStorage.getItem(
-            RESULTS_STORAGE_KEY
-        );
-
-
-    if (!saved) {
-
-        return null;
-
-    }
-
-
-    return JSON.parse(saved);
+    return snapshot.val();
 
 }
 
 
 
 
-function compareRatings() {
+function compareRatings(data) {
 
-
-    const data =
-        getResultsData();
-
-
-    if (!data || !data.users) {
-
+    if (!data) {
         return [];
-
     }
 
-
     const wren =
-        data.users.wren?.ratings || {};
-
+        data.wren?.ratings || {};
 
     const elijah =
-        data.users.elijah?.ratings || {};
+        data.elijah?.ratings || {};
 
 
 
@@ -89,14 +65,14 @@ function compareRatings() {
 
 }
 
+async function renderResults() {
 
 
+  const data =
+    await getResultsData();
 
-function renderResults() {
-
-
-    const results =
-        compareRatings();
+  const results =
+    compareRatings(data);
 
 
 
@@ -308,9 +284,32 @@ document.addEventListener(
 
         if (resultsButton) {
 
+          document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const resultsButton =
+            document.getElementById("results-btn");
+
+        if (resultsButton) {
+
             resultsButton.addEventListener(
                 "click",
-                () => {
+                async () => {
+
+                    console.log("Results button clicked");
+
+                    showScreen("results");
+
+                    await renderResults();
+
+                }
+            );
+
+        }
+
+    }
+);
 
                     console.log(
                         "Results button clicked"
@@ -349,9 +348,13 @@ document
 document
     .getElementById("export-btn")
     .addEventListener(
-        "click",
-        exportShortlist
-    );
+    	"click",
+    	async () => {
+
+        await exportShortlist();
+
+    }
+);
 
 
 function exportShortlist() {
@@ -360,22 +363,16 @@ function exportShortlist() {
         compareRatings();
 
 
-    const shortlist =
-        results.filter(name => {
+    async function exportShortlist() {
 
-            const ratings = [
-                name.wren,
-                name.elijah
-            ];
+    const data =
+        await getResultsData();
 
+    const results =
+        compareRatings(data);
 
-            return (
-                ratings.includes("love") ||
-                ratings.includes("like") ||
-                ratings.includes("maybe")
-            );
-
-        });
+    ...
+}
 
 
 

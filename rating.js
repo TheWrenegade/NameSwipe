@@ -62,12 +62,6 @@ function saveProgress() {
 
     };
 
-
-    console.log(
-        "SAVING:",
-        JSON.stringify(progress, null, 2)
-    );
-
     return database
         .ref(
             "users/" + appState.currentUser

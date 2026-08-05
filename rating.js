@@ -45,6 +45,32 @@ function getCurrentRatings() {
 
 }
 
+function saveProgress() {
+
+    const progress = {
+
+        currentIndex:
+            currentIndex,
+
+        order:
+            shuffledNames.map(
+                name => name.name
+            ),
+
+        ratings:
+            getCurrentRatings()
+
+    };
+
+
+    return database
+        .ref(
+            "users/" + appState.currentUser
+        )
+        .set(progress);
+
+}
+
 
 /* ==================================
    Initialize Rating System

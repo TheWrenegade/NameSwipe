@@ -8,6 +8,8 @@ let currentIndex = 0;
 
 let shuffledNames = [];
 
+let sampleNames = [];
+
 let selectedRating = null;
 
 let previousAction = null;
@@ -73,32 +75,7 @@ function saveProgress() {
 
 }
 
-
-
-function loadProgress() {
-
-
-    return database
-        .ref(
-            "users/" + appState.currentUser
-        )
-        .once("value")
-        .then(snapshot => {
-
-
-            const progress =
-                snapshot.val();
-
-
-            if (!progress) {
-
-                return false;
-
-            }
-
-
-
-            shuffledNames =
+           shuffledNames =
                 progress.order
                     .map(savedName =>
                         sampleNames.find(
@@ -158,6 +135,34 @@ function loadProgress() {
    Initialize Rating System
    ================================== */
 
+async function initializeRatings() {
+
+    await loadProgress();
+
+    appState.names = shuffledNames;
+
+    displayCurrentName();
+
+    updateProgress();
+
+    setupRatingButtons();
+
+    document
+        .getElementById("user-notes")
+        .addEventListener("input", () => {
+
+            const name = shuffledNames[currentIndex];
+
+            if (!name) return;
+
+            name.userNotes =
+                document.getElementById("user-notes").value;
+
+            saveProgress();
+
+        });
+
+}
 
 async function loadProgress() {
 

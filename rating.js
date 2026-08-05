@@ -117,10 +117,15 @@ async function loadProgress() {
     sampleNames = loadedNames;
 
 
-    console.log(
-        "Firebase user:",
-        appState.currentUser
-    );
+	console.log(
+	    "FULL FIREBASE PATH:",
+	    "users/" + appState.currentUser
+	);
+	
+	console.log(
+	    "FULL FIREBASE DATA:",
+	    JSON.stringify(progress, null, 2)
+	);
 
     const snapshot =
         await database
@@ -146,11 +151,6 @@ async function loadProgress() {
     /*
        Restore existing order
     */
-	console.log(
-	    "RAW FIREBASE RATINGS:",
-	    progress.ratings
-	);
-
     shuffledNames =
         progress.order
             .map(savedName =>

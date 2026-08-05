@@ -46,75 +46,6 @@ function getCurrentRatings() {
 }
 
 
-function loadProgress() {
-
-    return database
-        .ref(
-            "users/" + appState.currentUser
-        )
-        .once("value")
-        .then(snapshot => {
-
-            const progress = snapshot.val();
-
-            if (!progress) {
-                return false;
-            }
-
-
-            shuffledNames =
-                progress.order
-                    .map(savedName =>
-                        sampleNames.find(
-                            name =>
-                                name.name === savedName
-                        )
-                    )
-                    .filter(Boolean);
-
-
-
-            Object.keys(
-                progress.ratings || {}
-            ).forEach(nameKey => {
-
-
-                const saved =
-                    progress.ratings[nameKey];
-
-
-                const name =
-                    shuffledNames.find(
-                        name =>
-                            name.name === nameKey
-                    );
-
-
-                if (name) {
-
-                    name.userRating =
-                        saved.rating;
-
-
-                    name.userNotes =
-                        saved.notes;
-
-                }
-
-            });
-
-
-
-            currentIndex =
-                findNextUnratedName();
-
-
-
-            return true;
-
-        });
-
-}
 /* ==================================
    Initialize Rating System
    ================================== */
@@ -153,35 +84,29 @@ async function loadProgress() {
     const loadedNames =
         await loadNamesFromSheet();
 
-    sampleNames =
-        loadedNames;
+    console.log(
+        "Sheet names:",
+        loadedNames.length,
+        loadedNames[0]
+    );
 
+    sampleNames = loadedNames;
+
+
+    console.log(
+        "Firebase user:",
+        appState.currentUser
+    );
 
     const snapshot =
         await database
-            .ref(
-                "users/" + appState.currentUser
-            )
+            .ref("users/" + appState.currentUser)
             .once("value");
 
-
-    const progress =
-        snapshot.val();
-
-
-    // No previous progress = start fresh
-    if (!progress) {
-
-        shuffledNames =
-            shuffleArray(
-                [...sampleNames]
-            );
-
-        currentIndex = 0;
-
-        return false;
-
-    }
+    console.log(
+        "Firebase data:",
+        snapshot.val()
+    );
 
 
     /*

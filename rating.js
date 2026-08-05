@@ -227,12 +227,11 @@ console.log(
         progress.ratings || {}
     ).forEach(nameKey => {
 
-		console.log(
-		    "Restoring rating:",
-		    nameKey,
-		    progress.ratings[nameKey]
-		);
-
+	console.log(
+	    "Restoring rating:",
+	    nameKey,
+	    JSON.stringify(progress.ratings[nameKey])
+	);
 
         const saved =
             progress.ratings[nameKey];

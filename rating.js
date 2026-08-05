@@ -117,6 +117,16 @@ async function loadProgress() {
     sampleNames = loadedNames;
 
 
+	
+
+    const snapshot =
+        await database
+            .ref("users/" + appState.currentUser)
+            .once("value");
+	
+	const progress =
+    	snapshot.val();
+
 	console.log(
 	    "FULL FIREBASE PATH:",
 	    "users/" + appState.currentUser
@@ -126,14 +136,6 @@ async function loadProgress() {
 	    "FULL FIREBASE DATA:",
 	    JSON.stringify(progress, null, 2)
 	);
-
-    const snapshot =
-        await database
-            .ref("users/" + appState.currentUser)
-            .once("value");
-	
-	const progress =
-    	snapshot.val();
 
 	if (!progress) {
 

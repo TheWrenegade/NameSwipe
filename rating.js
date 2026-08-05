@@ -63,13 +63,16 @@ function saveProgress() {
     };
 
 
-    return database
-        .ref(
-            "users/" + appState.currentUser
-        )
-        .set(progress);
+    console.log(
+	    "SAVING:",
+	    JSON.stringify(progress, null, 2)
+	);
 
-}
+return database
+    .ref(
+        "users/" + appState.currentUser
+    )
+    .set(progress);
 
 
 /* ==================================

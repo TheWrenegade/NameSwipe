@@ -64,16 +64,17 @@ function saveProgress() {
 
 
     console.log(
-	    "SAVING:",
-	    JSON.stringify(progress, null, 2)
-	);
+        "SAVING:",
+        JSON.stringify(progress, null, 2)
+    );
 
-return database
-    .ref(
-        "users/" + appState.currentUser
-    )
-    .set(progress);
+    return database
+        .ref(
+            "users/" + appState.currentUser
+        )
+        .set(progress);
 
+}
 
 /* ==================================
    Initialize Rating System
@@ -149,9 +150,21 @@ async function loadProgress() {
 }
 	
     console.log(
-        "Firebase data:",
-        progress
-    );
+    "Firebase data:",
+    JSON.stringify(progress, null, 2)
+);
+
+console.log(
+    "Ratings object:",
+    JSON.stringify(progress.ratings, null, 2)
+);
+
+console.log(
+	 "Saved order:",
+	progress.order?.slice(0, 10),
+	"Length:",
+	progress.order?.length
+);
 
 
     /*
@@ -168,6 +181,11 @@ async function loadProgress() {
             )
             .filter(Boolean);
 
+	console.log(
+	    "Restored shuffledNames:",
+	    shuffledNames.length,
+	    shuffledNames.slice(0,5)
+	);
 
 
     /*
@@ -411,13 +429,31 @@ function updateProgress() {
         .textContent =
         name.acquaintance;
 
-
-    clearRatingState();
-
+	selectedRating = name.userRating || null;
+	
 	document.getElementById("user-notes").value =
-		name.userNotes || "";
+	    name.userNotes || "";
+	
+	restoreRatingButtons(name.userRating);
 
 }
+
+	function restoreRatingButtons(rating) {
+
+    document
+        .querySelectorAll(".rating[data-rating]")
+        .forEach(button => {
+
+            button.classList.toggle(
+                "selected",
+                button.dataset.rating === rating
+            );
+
+        });
+
+}
+
+
 
 
 

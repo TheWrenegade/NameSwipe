@@ -212,6 +212,12 @@ async function loadProgress() {
         progress.ratings || {}
     ).forEach(nameKey => {
 
+		console.log(
+		    "Restoring rating:",
+		    nameKey,
+		    progress.ratings[nameKey]
+		);
+
 
         const saved =
             progress.ratings[nameKey];
@@ -226,6 +232,11 @@ async function loadProgress() {
 
         if (name) {
 
+			console.log(
+			    "Matched name:",
+			    name.name
+			);
+			
             name.userRating =
                 saved.rating;
 

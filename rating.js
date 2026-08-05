@@ -46,36 +46,23 @@ function getCurrentRatings() {
 }
 
 
-
-function saveProgress() {
-
-
-    const progress = {
-
-        currentIndex:
-            currentIndex,
-
-        order:
-            shuffledNames.map(
-                name => name.name
-            ),
-
-        ratings:
-            getCurrentRatings()
-
-    };
-
+function loadProgress() {
 
     return database
         .ref(
             "users/" + appState.currentUser
         )
-        .set(progress);
+        .once("value")
+        .then(snapshot => {
+
+            const progress = snapshot.val();
+
+            if (!progress) {
+                return false;
+            }
 
 
-}
-
-           shuffledNames =
+            shuffledNames =
                 progress.order
                     .map(savedName =>
                         sampleNames.find(
@@ -114,23 +101,20 @@ function saveProgress() {
 
                 }
 
-
             });
 
 
 
-            currentIndex = findNextUnratedName();
+            currentIndex =
+                findNextUnratedName();
 
 
 
             return true;
 
-
         });
 
-
 }
-
 /* ==================================
    Initialize Rating System
    ================================== */

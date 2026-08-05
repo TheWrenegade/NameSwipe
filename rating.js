@@ -485,12 +485,10 @@ function setupRatingButtons() {
 
 
 
-function rateName(rating) {
-
+async function rateName(rating) {
 
     const name =
         shuffledNames[currentIndex];
-
 
     console.log(
         name.name,
@@ -498,16 +496,7 @@ function rateName(rating) {
         rating
     );
 
-	previousAction = {
-	    index: currentIndex,
-	    name: name.name,
-	    oldRating: name.userRating || null,
-	    oldNotes: name.userNotes || ""
-	};
-
-    name.userRating =
-        rating;
-
+    name.userRating = rating;
 
     name.userNotes =
         document.getElementById(
@@ -515,16 +504,19 @@ function rateName(rating) {
         ).value;
 
 
-    saveProgress();
-	updateProgress();
+    await saveProgress();
+
+    console.log(
+        "Saved after rating:",
+        name.name,
+        name.userRating,
+        name.userNotes
+    );
 
 
-    selectedRating =
-        rating;
-
+    updateProgress();
 
     moveToNextName();
-
 
 }
 

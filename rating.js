@@ -142,16 +142,6 @@ async function loadProgress() {
     return false;
 
 }
-	
-    console.log(
-    "Firebase data:",
-    JSON.stringify(progress, null, 2)
-);
-
-console.log(
-    "Ratings object:",
-    JSON.stringify(progress.ratings, null, 2)
-);
 
 console.log(
 	 "Saved order:",

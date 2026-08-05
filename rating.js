@@ -128,10 +128,13 @@ async function loadProgress() {
         await database
             .ref("users/" + appState.currentUser)
             .once("value");
-
+	
+	const progress =
+    	snapshot.val();
+	
     console.log(
         "Firebase data:",
-        snapshot.val()
+        progress
     );
 
 

@@ -692,14 +692,10 @@ document
                     [...sampleNames]
                 );
 
-
             shuffledNames =
                 newOrder;
 
-
             currentIndex = 0;
-
-
 
             await database
                 .ref(
@@ -718,13 +714,11 @@ document
 
                 });
 
-
-
             displayCurrentName();
-
 
             showScreen("rating");
 
         }
     );
+
 window.undoRating = undoRating;

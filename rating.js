@@ -275,7 +275,15 @@ console.log(
     /*
        Find next unfinished name
     */
-
+	console.log(
+	    "CHECK RATINGS:",
+	    shuffledNames.slice(0,10).map(name => ({
+	        name: name.name,
+	        rating: name.userRating,
+	        notes: name.userNotes
+	    }))
+	);
+		
     currentIndex =
         findNextUnratedName();
 

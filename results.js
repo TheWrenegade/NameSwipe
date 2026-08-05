@@ -79,42 +79,28 @@ async function renderResults() {
     const strongMatches =
     results.filter(item => {
 
-        const pair =
-            [
-                item.wren,
-                item.elijah
-            ];
-
         return (
 
-            pair.includes("love") &&
-            (
-                pair.includes("love") ||
-                pair.includes("like")
-            )
+            (item.wren === "love" && item.elijah === "love") ||
+
+            (item.wren === "love" && item.elijah === "like") ||
+
+            (item.wren === "like" && item.elijah === "love")
 
         );
 
     });
 
-
 	const agreeable =
-	results.filter(item => {
-
-        const pair =
-            [
-                item.wren,
-                item.elijah
-            ];
-
+    results.filter(item => {
 
         return (
 
-            pair.includes("like") &&
-            (
-                pair.includes("like") ||
-                pair.includes("maybe")
-            )
+            (item.wren === "like" && item.elijah === "like") ||
+
+            (item.wren === "like" && item.elijah === "maybe") ||
+
+            (item.wren === "maybe" && item.elijah === "like")
 
         );
 
@@ -125,20 +111,13 @@ async function renderResults() {
 	const discuss =
     results.filter(item => {
 
-        const pair =
-            [
-                item.wren,
-                item.elijah
-            ];
-
-
         return (
 
-            pair.includes("maybe") &&
-            !(
-                pair.includes("love") ||
-                pair.includes("like")
-            )
+            item.wren !== "pass" &&
+            item.elijah !== "pass" &&
+
+            !strongMatches.includes(item) &&
+            !agreeable.includes(item)
 
         );
 
@@ -271,24 +250,6 @@ document.addEventListener(
     () => {
 
         const resultsButton =
-            document.getElementById(
-                "results-btn"
-            );
-
-
-        console.log(
-            "Results button:",
-            resultsButton
-        );
-
-
-        if (resultsButton) {
-
-          document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        const resultsButton =
             document.getElementById("results-btn");
 
         if (resultsButton) {
@@ -297,29 +258,8 @@ document.addEventListener(
                 "click",
                 async () => {
 
-                    console.log("Results button clicked");
-
                     showScreen("results");
-
                     await renderResults();
-
-                }
-            );
-
-        }
-
-    }
-);
-
-                    console.log(
-                        "Results button clicked"
-                    );
-
-
-                    showScreen("results");
-
-
-                    renderResults();
 
                 }
             );
@@ -357,31 +297,21 @@ document
 );
 
 
-function exportShortlist() {
+async function exportShortlist() {
 
-    const results =
-        compareRatings();
+    const data = await getResultsData();
 
+    const results = compareRatings(data);
 
-    async function exportShortlist() {
-
-    const data =
-        await getResultsData();
-
-    const results =
-        compareRatings(data);
-
-    ...
-}
-
-
+    const shortlist = results.filter(item =>
+        item.wren !== "pass" &&
+        item.elijah !== "pass"
+    );
 
     let csv =
         "Name,Wren Rating,Elijah Rating,Wren Notes,Elijah Notes\n";
 
-
     shortlist.forEach(name => {
-
 
         csv += [
             name.name,
@@ -392,16 +322,12 @@ function exportShortlist() {
 
         ].join(",") + "\n";
 
-
     });
-
-
 
     downloadCSV(
         csv,
         "Baby_Name_Shortlist.csv"
     );
-
 }
 
 

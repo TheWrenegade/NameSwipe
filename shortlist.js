@@ -13,15 +13,6 @@ let maleNames = [];
 
 let femaleNames = [];
 
-
-/* ==================================
-   Google Sheet
-   ================================== */
-
-const SHORTLIST_SHEET_URL =
-    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXhxVGEejVjt_sYGAvvbJ4kt-yEKkQztBinnYkvaDHtZIiknqxSJJdM_zRMGFc4WcQJtmCD3vXAdLX/pub?gid=872769428&single=true&output=csv";
-
-
 /* ==================================
    Load Shortlist
    ================================== */

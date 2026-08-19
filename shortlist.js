@@ -599,7 +599,7 @@ function createShortlistRow(
 
 
     expandButton.title =
-        "Show details";
+        "Show details"; */
 
 
     /* ==========================
@@ -612,7 +612,7 @@ function createShortlistRow(
 
     header.appendChild(controls);
 
-    header.appendChild(expandButton);
+    /* header.appendChild(expandButton); */
 
 
     row.appendChild(header);
@@ -772,7 +772,7 @@ function createShortlistRow(
                     : "▴";
 
         }
-    );
+    ); */
 
 
 /* ==================================

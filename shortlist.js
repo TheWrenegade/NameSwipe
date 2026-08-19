@@ -98,10 +98,6 @@ async function loadShortlistNamesFromSheet() {
 }
 
 
-/* ==================================
-   Load Shortlist
-   ================================== */
-
 async function loadShortlist() {
 
     shortlistNames =
@@ -110,8 +106,7 @@ async function loadShortlist() {
 
     console.log(
         "Shortlist loaded:",
-        shortlistNames.length,
-        shortlistNames
+        shortlistNames.length
     );
 
 
@@ -129,19 +124,244 @@ async function loadShortlist() {
         );
 
 
+    /*
+        Restore this user's saved
+        ranking.
+    */
+
+    await loadShortlistProgress();
+
+
     console.log(
-        "Male names:",
-        maleNames
+        "Final male order:",
+        maleNames.map(
+            name => name.name
+        )
     );
 
 
     console.log(
-        "Female names:",
-        femaleNames
+        "Final female order:",
+        femaleNames.map(
+            name => name.name
+        )
     );
 
 
     return shortlistNames;
+
+}
+
+/* ==================================
+   Shortlist Firebase Persistence
+   ================================== */
+
+
+/*
+    Save the current shortlist order
+*/
+
+async function saveShortlistProgress() {
+
+    if (!appState.currentUser) {
+
+        console.log(
+            "Cannot save shortlist: no user selected."
+        );
+
+        return;
+
+    }
+
+
+    const progress = {
+
+        male:
+            maleNames.map(
+                name => name.name
+            ),
+
+        female:
+            femaleNames.map(
+                name => name.name
+            )
+
+    };
+
+
+    console.log(
+        "Saving shortlist:",
+        progress
+    );
+
+
+    await database
+        .ref(
+            "users/" +
+            appState.currentUser +
+            "/shortlist"
+        )
+        .set(progress);
+
+}
+
+
+/*
+    Load the user's saved shortlist order
+*/
+
+async function loadShortlistProgress() {
+
+    if (!appState.currentUser) {
+
+        console.log(
+            "Cannot load shortlist: no user selected."
+        );
+
+        return false;
+
+    }
+
+
+    const snapshot =
+        await database
+            .ref(
+                "users/" +
+                appState.currentUser +
+                "/shortlist"
+            )
+            .once("value");
+
+
+    const progress =
+        snapshot.val();
+
+
+    console.log(
+        "Shortlist Firebase data:",
+        progress
+    );
+
+
+    /*
+        No saved shortlist yet.
+        Keep the Google Sheet order.
+    */
+
+    if (!progress) {
+
+        console.log(
+            "No saved shortlist order."
+        );
+
+        await saveShortlistProgress();
+
+        return false;
+
+    }
+
+
+    /*
+        Restore male order
+    */
+
+    if (
+        Array.isArray(progress.male)
+    ) {
+
+        maleNames =
+            restoreShortlistOrder(
+                maleNames,
+                progress.male
+            );
+
+    }
+
+
+    /*
+        Restore female order
+    */
+
+    if (
+        Array.isArray(progress.female)
+    ) {
+
+        femaleNames =
+            restoreShortlistOrder(
+                femaleNames,
+                progress.female
+            );
+
+    }
+
+
+    return true;
+
+}
+
+
+/*
+    Rebuild a name list using
+    the saved order.
+*/
+
+function restoreShortlistOrder(
+    names,
+    savedOrder
+) {
+
+    const restored = [];
+
+
+    /*
+        Add names in saved order
+    */
+
+    savedOrder.forEach(
+        savedName => {
+
+            const name =
+                names.find(
+                    name =>
+                        name.name === savedName
+                );
+
+
+            if (name) {
+
+                restored.push(name);
+
+            }
+
+        }
+    );
+
+
+    /*
+        Add any names that exist in
+        the spreadsheet but weren't
+        in the saved Firebase order.
+    */
+
+    names.forEach(name => {
+
+        const alreadyIncluded =
+            restored.some(
+                restoredName =>
+                    restoredName.name === name.name
+            );
+
+
+        if (!alreadyIncluded) {
+
+            restored.push(name);
+
+        }
+
+    });
+
+
+    return restored;
 
 }
 
@@ -301,18 +521,22 @@ function createShortlistRow(
 
 
     upButton.addEventListener(
-        "click",
-        () => {
+    "click",
+    async () => {
 
-            moveNameUp(
-                list,
-                index
-            );
+        moveNameUp(
+            list,
+            index
+        );
 
-            renderShortlist();
 
-        }
-    );
+        await saveShortlistProgress();
+
+
+        renderShortlist();
+
+    }
+);
 
 
     const downButton =
@@ -339,19 +563,23 @@ function createShortlistRow(
         index === list.length - 1;
 
 
-    downButton.addEventListener(
-        "click",
-        () => {
+   downButton.addEventListener(
+    "click",
+    async () => {
 
-            moveNameDown(
-                list,
-                index
-            );
+        moveNameDown(
+            list,
+            index
+        );
 
-            renderShortlist();
 
-        }
-    );
+        await saveShortlistProgress();
+
+
+        renderShortlist();
+
+    }
+);
 
 
     controls.appendChild(upButton);
@@ -667,6 +895,13 @@ function moveNameDown(
 
 }
 
+async function initializeShortlist() {
+
+    await loadShortlist();
+
+    renderShortlist();
+
+}
 
 /* ==================================
    Global Access
@@ -684,38 +919,21 @@ window.moveNameUp =
 window.moveNameDown =
     moveNameDown;
 
-document.addEventListener(
-    "DOMContentLoaded",
-    async () => {
-
-        await loadShortlist();
-
-        renderShortlist();
-
-    }
-);
-
 window.renderShortlist =
     renderShortlist;
+
+window.initializeShortlist =
+    initializeShortlist;
 
 document
     .getElementById("shortlist-button")
     .addEventListener(
         "click",
-        () => {
+        async () => {
+
+            await initializeShortlist();
 
             showScreen("shortlist");
-
-        }
-    );
-
-document
-    .getElementById("shortlist-back-button")
-    .addEventListener(
-        "click",
-        () => {
-
-            showScreen("rating");
 
         }
     );

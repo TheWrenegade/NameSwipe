@@ -173,7 +173,108 @@ body {
 
 }
 
+/* ==================================
+   Shortlist
+   ================================== */
 
+.shortlist-container {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+
+.shortlist-section {
+    margin-bottom: 40px;
+}
+
+
+.shortlist-section h2 {
+    margin-bottom: 12px;
+}
+
+
+.shortlist {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+
+.shortlist-row {
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+}
+
+
+.shortlist-row-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+}
+
+
+.shortlist-rank {
+    width: 32px;
+    text-align: right;
+    font-weight: bold;
+}
+
+
+.shortlist-name {
+    flex: 1;
+    border: none;
+    background: none;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 6px;
+}
+
+
+.shortlist-controls {
+    display: flex;
+    gap: 4px;
+}
+
+
+.shortlist-move,
+.shortlist-expand {
+    width: 32px;
+    height: 32px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background: white;
+    cursor: pointer;
+}
+
+
+.shortlist-move:disabled {
+    opacity: 0.3;
+    cursor: default;
+}
+
+
+.shortlist-details {
+    border-top: 1px solid #eee;
+    padding: 12px 16px;
+    background: #fafafa;
+}
+
+
+.shortlist-detail {
+    display: grid;
+    grid-template-columns: 150px 1fr;
+    gap: 10px;
+    padding: 5px 0;
+}
+
+
+.shortlist-detail strong {
+    font-weight: 600;
+}
 
 /* ==============================
    Header

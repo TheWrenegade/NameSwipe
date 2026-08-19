@@ -1,62 +1,99 @@
 /* ==================================
-   Shortlist Rating State
+   Baby Name Picker - Shortlist
    ================================== */
-
-let shortlistCurrentIndex = 0;
-let shortlistNames = [];
-let shortlistSelectedRating = null;
 
 
 /* ==================================
-   Firebase
+   Shortlist State
    ================================== */
 
-function getShortlistRatings() {
+let shortlistNames = [];
 
-    const ratings = {};
+let maleNames = [];
 
-    shortlistNames.forEach(name => {
-
-        ratings[name.name] = {
-            rating: name.userRating ?? null,
-            notes: name.userNotes || ""
-        };
-
-    });
-
-    return ratings;
-}
+let femaleNames = [];
 
 
-function saveShortlistProgress() {
+/* ==================================
+   Google Sheet
+   ================================== */
 
-    const progress = {
+const SHORTLIST_SHEET_URL =
+    "https://docs.google.com/spreadsheets/d/e/2PACX-1vRXhxVGEejVjt_sYGAvvbJ4kt-yEKkQztBinnYkvaDHtZIiknqxSJJdM_zRMGFc4WcQJtmCD3vXAdLX/pub?gid=872769428&single=true&output=csv";
 
-        currentIndex:
-            shortlistCurrentIndex,
 
-        order:
-            shortlistNames.map(
-                name => name.name
-            ),
+/* ==================================
+   Load Shortlist
+   ================================== */
 
-        ratings:
-            getShortlistRatings()
+async function loadShortlistNamesFromSheet() {
 
-    };
+    const response =
+        await fetch(SHORTLIST_SHEET_URL);
 
-    console.log(
-        "Saving shortlist:",
-        progress
-    );
+    const csv =
+        await response.text();
 
-    return database
-        .ref(
-            "users/" +
-            appState.currentUser +
-            "/shortlist"
-        )
-        .set(progress);
+    const rows =
+        csvToArray(csv);
+
+    const headers =
+        rows.shift();
+
+    return rows
+        .filter(row => row[0]?.trim())
+        .map(row => {
+
+            const name = {};
+
+            headers.forEach(
+                (header, index) => {
+
+                    name[header.trim()] =
+                        row[index]?.trim() || "";
+
+                }
+            );
+
+
+            return {
+
+                name:
+                    name.Name,
+
+                sex:
+                    name.Sex,
+
+                origin:
+                    name.Origin,
+
+                reference:
+                    name.Reference,
+
+                nicknames:
+                    name.Nicknames,
+
+                syllables:
+                    Number(name.Syllables),
+
+                acquaintance:
+                    name.Acquaintance,
+
+                generalNotes:
+                    name.Notes,
+
+                elijahNotes:
+                    name["Elijah-Notes"],
+
+                wrenNotes:
+                    name["Wren-Notes"],
+
+                ranking:
+                    name["2025 Ranking"]
+
+            };
+
+        });
 
 }
 
@@ -67,315 +104,200 @@ function saveShortlistProgress() {
 
 async function loadShortlist() {
 
-    const loadedNames =
+    shortlistNames =
         await loadShortlistNamesFromSheet();
 
-    shortlistNames = loadedNames;
 
-    const snapshot =
-        await database
-            .ref(
-                "users/" +
-                appState.currentUser +
-                "/shortlist"
-            )
-            .once("value");
+    console.log(
+        "Shortlist loaded:",
+        shortlistNames.length,
+        shortlistNames
+    );
 
-    const progress =
-        snapshot.val();
 
-    if (!progress) {
+    maleNames =
+        shortlistNames.filter(
+            name =>
+                name.sex.toLowerCase() === "male"
+        );
 
-        shortlistNames =
-            shuffleArray(
-                [...loadedNames]
-            );
 
-        shortlistCurrentIndex = 0;
+    femaleNames =
+        shortlistNames.filter(
+            name =>
+                name.sex.toLowerCase() === "female"
+        );
 
-        await saveShortlistProgress();
+
+    console.log(
+        "Male names:",
+        maleNames
+    );
+
+
+    console.log(
+        "Female names:",
+        femaleNames
+    );
+
+
+    return shortlistNames;
+
+}
+
+
+/* ==================================
+   Move Name
+   ================================== */
+
+function moveName(
+    list,
+    index,
+    direction
+) {
+
+    const newIndex =
+        index + direction;
+
+
+    if (
+        newIndex < 0 ||
+        newIndex >= list.length
+    ) {
 
         return;
 
     }
 
 
-    /*
-       Restore saved order
-    */
-
-    shortlistNames =
-        progress.order
-            .map(savedName =>
-                loadedNames.find(
-                    name =>
-                        name.name === savedName
-                )
-            )
-            .filter(Boolean);
+    const temp =
+        list[index];
 
 
-    /*
-       Restore ratings
-    */
+    list[index] =
+        list[newIndex];
 
-    Object.keys(
-        progress.ratings || {}
-    ).forEach(nameKey => {
 
-        const saved =
-            progress.ratings[nameKey];
+    list[newIndex] =
+        temp;
 
-        const name =
-            shortlistNames.find(
-                name =>
-                    name.name === nameKey
-            );
 
-        if (name) {
+    console.log(
+        "New order:",
+        list.map(
+            name => name.name
+        )
+    );
 
-            name.userRating =
-                saved.rating;
+}
 
-            name.userNotes =
-                saved.notes || "";
+
+/* ==================================
+   Move Up
+   ================================== */
+
+function moveNameUp(
+    list,
+    index
+) {
+
+    moveName(
+        list,
+        index,
+        -1
+    );
+
+}
+
+
+/* ==================================
+   Move Down
+   ================================== */
+
+function moveNameDown(
+    list,
+    index
+) {
+
+    moveName(
+        list,
+        index,
+        1
+    );
+
+}
+
+
+/* ==================================
+   CSV Parser
+   ================================== */
+
+function csvToArray(csv) {
+
+    const lines =
+        csv.split("\n");
+
+
+    return lines.map(line => {
+
+        const values = [];
+
+        let current = "";
+
+        let insideQuotes = false;
+
+
+        for (let char of line) {
+
+            if (char === '"') {
+
+                insideQuotes =
+                    !insideQuotes;
+
+            }
+
+            else if (
+                char === "," &&
+                !insideQuotes
+            ) {
+
+                values.push(current);
+
+                current = "";
+
+            }
+
+            else {
+
+                current += char;
+
+            }
 
         }
 
+
+        values.push(current);
+
+
+        return values;
+
     });
 
-
-    /*
-       Find next unrated name
-    */
-
-    shortlistCurrentIndex =
-        shortlistNames.findIndex(
-            name => !name.userRating
-        );
-
-
-    if (shortlistCurrentIndex === -1) {
-        shortlistCurrentIndex = 0;
-    }
-
 }
 
 
 /* ==================================
-   Display Shortlist Name
+   Global Access
    ================================== */
 
-function displayShortlistName() {
+window.loadShortlist =
+    loadShortlist;
 
-    const name =
-        shortlistNames[
-            shortlistCurrentIndex
-        ];
+window.loadShortlistNamesFromSheet =
+    loadShortlistNamesFromSheet;
 
-    if (!name) {
-        showScreen("shortlist-finished");
-        return;
-    }
+window.moveNameUp =
+    moveNameUp;
 
-
-    document.getElementById(
-        "shortlist-name"
-    ).textContent =
-        name.name;
-
-
-    document.getElementById(
-        "shortlist-sex-pill"
-    ).textContent =
-        name.sex;
-
-
-    document.getElementById(
-        "shortlist-origin"
-    ).textContent =
-        name.origin;
-
-
-    document.getElementById(
-        "shortlist-ranking"
-    ).textContent =
-        "#" + name.ranking;
-
-
-    document.getElementById(
-        "shortlist-syllables"
-    ).textContent =
-        name.syllables;
-
-
-    document.getElementById(
-        "shortlist-nicknames"
-    ).textContent =
-        name.nicknames;
-
-
-    document.getElementById(
-        "shortlist-reference"
-    ).textContent =
-        name.reference;
-
-
-    document.getElementById(
-        "shortlist-acquaintance"
-    ).textContent =
-        name.acquaintance;
-
-
-    document.getElementById(
-        "shortlist-notes"
-    ).value =
-        name.userNotes || "";
-
-
-    restoreShortlistRatingButtons(
-        name.userRating
-    );
-
-    updateShortlistProgress();
-
-}
-
-
-/* ==================================
-   Restore Buttons
-   ================================== */
-
-function restoreShortlistRatingButtons(rating) {
-
-    document
-        .querySelectorAll(
-            ".shortlist-rating[data-rating]"
-        )
-        .forEach(button => {
-
-            button.classList.toggle(
-                "selected",
-                button.dataset.rating === rating
-            );
-
-        });
-
-}
-
-
-/* ==================================
-   Rate Name
-   ================================== */
-
-function rateShortlistName(rating) {
-
-    const name =
-        shortlistNames[
-            shortlistCurrentIndex
-        ];
-
-    if (!name) return;
-
-    name.userRating =
-        rating;
-
-    name.userNotes =
-        document.getElementById(
-            "shortlist-notes"
-        ).value;
-
-    shortlistSelectedRating =
-        rating;
-
-    saveShortlistProgress();
-
-    updateShortlistProgress();
-
-    moveToNextShortlistName();
-
-}
-
-
-/* ==================================
-   Move Forward
-   ================================== */
-
-function moveToNextShortlistName() {
-
-    shortlistCurrentIndex++;
-
-    if (
-        shortlistCurrentIndex >=
-        shortlistNames.length
-    ) {
-
-        saveShortlistProgress();
-
-        showScreen(
-            "shortlist-finished"
-        );
-
-        return;
-
-    }
-
-    saveShortlistProgress();
-
-    displayShortlistName();
-
-}
-
-
-/* ==================================
-   Progress
-   ================================== */
-
-function updateShortlistProgress() {
-
-    const total =
-        shortlistNames.length;
-
-    const rated =
-        shortlistNames.filter(
-            name => name.userRating
-        ).length;
-
-    document.getElementById(
-        "shortlist-progress-count"
-    ).textContent =
-        `${rated} / ${total} Rated`;
-
-
-    const percent =
-        total === 0
-            ? 0
-            : Math.round(
-                (rated / total) * 100
-            );
-
-    document.getElementById(
-        "shortlist-progress-percent"
-    ).textContent =
-        `${percent}%`;
-
-
-    document.getElementById(
-        "shortlist-progress-fill"
-    ).style.width =
-        `${percent}%`;
-
-}
-
-
-/* ==================================
-   Initialize
-   ================================== */
-
-async function initializeShortlist() {
-
-    await loadShortlist();
-
-    displayShortlistName();
-
-}
+window.moveNameDown =
+    moveNameDown;

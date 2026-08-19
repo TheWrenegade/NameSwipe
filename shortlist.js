@@ -931,9 +931,22 @@ document
         "click",
         async () => {
 
-            await initializeShortlist();
+            console.log("Shortlist button clicked.");
 
             showScreen("shortlist");
+
+            try {
+
+                await initializeShortlist();
+
+            } catch (error) {
+
+                console.error(
+                    "Error loading shortlist:",
+                    error
+                );
+
+            }
 
         }
     );

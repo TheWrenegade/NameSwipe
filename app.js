@@ -43,7 +43,10 @@ const screens = {
 
     browse: document.getElementById("browse-screen"),
 
+	shortlist: document.getElementById("shortlist-screen"),
+
     results: document.getElementById("results-screen")
+	
 
 };
 

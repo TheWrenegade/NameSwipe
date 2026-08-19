@@ -1,7 +1,7 @@
 /* ==================================
    Baby Name Picker - Shortlist
    ================================== */
-
+console.log("SHORTLIST.JS LOADED");
 
 /* ==================================
    Shortlist State

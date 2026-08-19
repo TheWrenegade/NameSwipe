@@ -582,7 +582,7 @@ function createShortlistRow(
        Expand Button
        ========================== */
 
-    const expandButton =
+    /* const expandButton =
         document.createElement("button");
 
 
@@ -739,48 +739,40 @@ function createShortlistRow(
 
     row.appendChild(details);
 
+   nameButton.addEventListener(
+    "click",
+    () => {
 
-    /* ==========================
-       Expand / Collapse
-       ========================== */
+        details.hidden =
+            !details.hidden;
 
-    expandButton.addEventListener(
-        "click",
-        () => {
-
-            details.hidden =
-                !details.hidden;
-
-
-            expandButton.textContent =
-                details.hidden
-                    ? "▾"
-                    : "▴";
-
-        }
-    );
-
-
-    nameButton.addEventListener(
-        "click",
-        () => {
-
-            details.hidden =
-                !details.hidden;
-
-
-            expandButton.textContent =
-                details.hidden
-                    ? "▾"
-                    : "▴";
-
-        }
-    );
+    }
+);
 
 
     return row;
 
 }
+
+    /* ==========================
+       Expand / Collapse
+       ========================== */
+
+   /* expandButton.addEventListener(
+        "click",
+        () => {
+
+            details.hidden =
+                !details.hidden;
+
+
+            expandButton.textContent =
+                details.hidden
+                    ? "▾"
+                    : "▴";
+
+        }
+    );
 
 
 /* ==================================

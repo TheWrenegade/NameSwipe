@@ -229,64 +229,6 @@ function moveNameDown(
 
 
 /* ==================================
-   CSV Parser
-   ================================== */
-
-function csvToArray(csv) {
-
-    const lines =
-        csv.split("\n");
-
-
-    return lines.map(line => {
-
-        const values = [];
-
-        let current = "";
-
-        let insideQuotes = false;
-
-
-        for (let char of line) {
-
-            if (char === '"') {
-
-                insideQuotes =
-                    !insideQuotes;
-
-            }
-
-            else if (
-                char === "," &&
-                !insideQuotes
-            ) {
-
-                values.push(current);
-
-                current = "";
-
-            }
-
-            else {
-
-                current += char;
-
-            }
-
-        }
-
-
-        values.push(current);
-
-
-        return values;
-
-    });
-
-}
-
-
-/* ==================================
    Global Access
    ================================== */
 
